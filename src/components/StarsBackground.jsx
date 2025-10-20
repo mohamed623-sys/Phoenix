@@ -3,19 +3,20 @@ import { Canvas, useFrame } from "@react-three/fiber";
 
 function Stars() {
   const mesh = useRef();
-  const starCount = 500;
-  const stars = Array.from({ length: starCount }).map(() => ({
+  const stars = Array.from({ length: 600 }).map(() => ({
     position: [
-      (Math.random() - 0.5) * 100,
-      (Math.random() - 0.5) * 100,
-      (Math.random() - 0.5) * 100
+      (Math.random() - 0.5) * 120,
+      (Math.random() - 0.5) * 120,
+      (Math.random() - 0.5) * 120
     ],
     scale: Math.random() * 0.5 + 0.1
   }));
 
   useFrame(({ clock }) => {
-    mesh.current.rotation.x = clock.getElapsedTime() / 20;
-    mesh.current.rotation.y = clock.getElapsedTime() / 20;
+    if (mesh.current) {
+      mesh.current.rotation.x = clock.getElapsedTime() / 20;
+      mesh.current.rotation.y = clock.getElapsedTime() / 20;
+    }
   });
 
   return (

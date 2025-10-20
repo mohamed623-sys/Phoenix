@@ -1,34 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState("vodafone");
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const handlePayment = () => {
-    alert(`Paid with ${paymentMethod.toUpperCase()}!`);
+  function payWithVodafone() {
+    alert("Payment via Vodafone Cash simulated! Redirecting...");
     localStorage.removeItem("cart");
     navigate("/success");
-  };
+  }
+
+  function payWithMeeza() {
+    alert("Payment via Meeza card simulated! Redirecting...");
+    localStorage.removeItem("cart");
+    navigate("/success");
+  }
+
+  if (!cart.length) return <div className="text-center mt-20">Your cart is empty</div>;
 
   return (
-    <div className="p-8 min-h-screen relative z-10 flex flex-col items-center">
-      <h1 className="text-5xl glow mb-6">Checkout</h1>
-      <div className="payment-method mb-6 flex flex-col gap-4">
-        <label>
-          <input type="radio" name="payment" value="vodafone" checked={paymentMethod === "vodafone"} 
-                 onChange={(e) => setPaymentMethod(e.target.value)} />
-          <span className="ml-2">Vodafone Cash</span>
-        </label>
-        <label>
-          <input type="radio" name="payment" value="meeza" checked={paymentMethod === "meeza"} 
-                 onChange={(e) => setPaymentMethod(e.target.value)} />
-          <span className="ml-2">Meeza Card / Visa</span>
-        </label>
+    <div className="min-h-screen p-8 relative z-10">
+      <h1 className="text-5xl glow mb-6 text-center">Checkout</h1>
+      <p className="text-gray-300 mb-4 text-center">
+        Choose payment method:
+      </p>
+      <div className="flex justify-center gap-6">
+        <button onClick={payWithVodafone} className="btn-futuristic w-48">Vodafone Cash</button>
+        <button onClick={payWithMeeza} className="btn-futuristic w-48">Meeza / Visa</button>
       </div>
-      <button onClick={handlePayment} className="btn-futuristic w-64">
-        Pay Now
-      </button>
     </div>
   );
 }
