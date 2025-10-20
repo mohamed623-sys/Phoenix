@@ -1,44 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Cart({ t }) {
-  const [items, setItems] = useState([]);
+export default function Cart() {
+  const [cart, setCart] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const raw = localStorage.getItem("cart") || "[]";
-    setItems(JSON.parse(raw));
+    const stored = JSON.parse(localStorage.getItem("cart") || "[]");
+    setCart(stored);
   }, []);
 
-  const remove = (index) => {
-    const newItems = items.slice();
-    newItems.splice(index, 1);
-    setItems(newItems);
-    localStorage.setItem("cart", JSON.stringify(newItems));
-  };
+  const total = cart.reduce((sum, p) => sum + p.price, 0);
 
-  const total = items.reduce((s, i) => s + (i.price || 0), 0);
+  const goToCheckout = () => navigate("/checkout");
 
-  if (items.length === 0) return <div className="py-20 text-center">Your cart is empty.</div>;
+  if (cart.length === 0) {
+    return (
+      <div className="p-8 text-white min-h-screen relative z-10 flex flex-col items-center justify-center">
+        <h1 className="text-3xl glow mb-4">Your Cart is Empty</h1>
+        <Link to="/shop" className="btn-futuristic">Go to Shop</Link>
+      </div>
+    );
+  }
 
   return (
-    <div className="py-12 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Cart</h2>
-      <div className="space-y-4">
-        {items.map((it, idx) => (
-          <div key={idx} className="flex items-center gap-4 bg-white/5 p-4 rounded">
-            <img src={it.image} alt={it.name} className="w-20 h-20 object-cover rounded" />
-            <div className="flex-1">
-              <div className="font-semibold">{it.name}</div>
-              <div className="text-white/70">${it.price}</div>
-            </div>
-            <button onClick={() => remove(idx)} className="px-3 py-1 border rounded">Remove</button>
+    <div className="p-8 min-h-screen relative z-10">
+      <h1 className="text-5xl glow mb-4">Your Cart</h1>
+      <div className="flex flex-col gap-4">
+        {cart.map((p, i) => (
+          <div key={i} className="cart-item neon-hover">
+            <span>{p.name}</span>
+            <span>EGP {p.price}</span>
           </div>
         ))}
       </div>
-
-      <div className="mt-6 flex justify-between items-center">
-        <div className="text-lg font-bold">Total: ${total.toFixed(2)}</div>
-        <button className="px-6 py-2 bg-pink-600 rounded">Checkout (placeholder)</button>
-      </div>
+      <p className="mt-4 font-bold glow">Total: EGP {total}</p>
+      <button onClick={goToCheckout} className="btn-futuristic mt-4">
+        Proceed to Checkout
+      </button>
     </div>
   );
 }

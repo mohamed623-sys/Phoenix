@@ -1,68 +1,67 @@
-import React, {useEffect, useState} from 'react'
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore'
-import { db } from '../firebase'
-import { useUser, SignedIn, SignedOut } from '@clerk/clerk-react'
+import React, { useEffect, useState } from "react";
+import { db } from "../firebase";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { useAuth } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
-const ADMIN_EMAIL = 'mohamedtareq543219@gmail.com'
+export default function Admin() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [form, setForm] = useState({ name: "", description: "", price: 0, image: "" });
 
-export default function Admin(){
-  const { user } = useUser() || {}
-  const [products, setProducts] = useState([])
-  const [form, setForm] = useState({name:'', price:'0', description:''})
+  const isAdmin = user?.primaryEmailAddress?.emailAddress === "mohamedtareq543219@gmail.com";
 
-  useEffect(()=>{ load() },[])
+  useEffect(() => {
+    if (!isAdmin) navigate("/shop");
+    fetchProducts();
+  }, []);
 
-  async function load(){
-    const q = collection(db, 'products')
-    const snap = await getDocs(q)
-    setProducts(snap.docs.map(d=>({id:d.id, ...d.data()})))
-  }
+  const fetchProducts = async () => {
+    const snapshot = await getDocs(collection(db, "products"));
+    setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  };
 
-  async function add(e){
-    e.preventDefault()
-    await addDoc(collection(db,'products'), {...form, price: Number(form.price)})
-    setForm({name:'',price:'0',description:''})
-    load()
-  }
+  const handleAdd = async () => {
+    await addDoc(collection(db, "products"), form);
+    setForm({ name: "", description: "", price: 0, image: "" });
+    fetchProducts();
+  };
 
-  async function remove(id){
-    await deleteDoc(doc(db,'products',id)); load()
-  }
+  const handleDelete = async (id) => {
+    await deleteDoc(doc(db, "products", id));
+    fetchProducts();
+  };
 
-  async function updateItem(id){
-    const price = prompt('New price (number)');
-    if(!price) return;
-    await updateDoc(doc(db,'products',id), {price: Number(price)})
-    load()
-  }
-
-  if(!user) return <div className="container">Please sign in to access admin.</div>
-  if(user?.primaryEmailAddress?.emailAddress !== ADMIN_EMAIL) return <div className="container">You are not authorized as admin ({user?.primaryEmailAddress?.emailAddress})</div>
+  const handleUpdate = async (id, updated) => {
+    await updateDoc(doc(db, "products", id), updated);
+    fetchProducts();
+  };
 
   return (
-    <div className="container">
-      <h2 className="text-3xl mb-4">Admin — Manage Products</h2>
-      <form onSubmit={add} className="space-y-3 mb-6">
-        <input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Name" className="w-full p-3 rounded bg-white/5"/>
-        <input required value={form.price} onChange={e=>setForm({...form,price:e.target.value})} placeholder="Price" className="w-full p-3 rounded bg-white/5"/>
-        <textarea value={form.description} onChange={e=>setForm({...form,description:e.target.value})} placeholder="Description" className="w-full p-3 rounded bg-white/5"></textarea>
-        <button className="btn btn-primary">Add Product</button>
-      </form>
-
-      <div className="grid gap-4">
-        {products.map(p=>(
-          <div key={p.id} className="p-4 bg-white/5 rounded flex justify-between">
-            <div>
-              <div className="font-bold">{p.name}</div>
-              <div className="text-white/70">{p.description}</div>
-            </div>
+    <div className="p-8 min-h-screen relative z-10">
+      <h1 className="text-5xl glow mb-6 text-center">Admin Panel</h1>
+      <div className="flex flex-col gap-4 mb-6">
+        <input placeholder="Name" className="input" value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})}/>
+        <input placeholder="Description" className="input" value={form.description} onChange={(e)=>setForm({...form,description:e.target.value})}/>
+        <input placeholder="Price" type="number" className="input" value={form.price} onChange={(e)=>setForm({...form,price:parseFloat(e.target.value)})}/>
+        <input placeholder="Image URL" className="input" value={form.image} onChange={(e)=>setForm({...form,image:e.target.value})}/>
+        <button onClick={handleAdd} className="btn-futuristic w-64 mt-2">Add Product</button>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {products.map(p => (
+          <div key={p.id} className="card">
+            <img src={p.image} alt={p.name} className="w-full h-64 object-cover mb-2"/>
+            <h2 className="text-xl glow mb-2">{p.name}</h2>
+            <p className="text-gray-300 mb-2">{p.description}</p>
+            <p className="font-bold glow mb-2">EGP {p.price}</p>
             <div className="flex gap-2">
-              <button className="btn btn-outline" onClick={()=>updateItem(p.id)}>Edit</button>
-              <button className="btn btn-outline" onClick={()=>remove(p.id)}>Delete</button>
+              <button onClick={()=>handleDelete(p.id)} className="btn w-full">Delete</button>
+              <button onClick={()=>handleUpdate(p.id,{price:p.price+10})} className="btn w-full">Update +10 EGP</button>
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }

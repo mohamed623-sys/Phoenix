@@ -1,18 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
-export default function Home({ t }) {
+export default function Home() {
   return (
-    <motion.section className="text-center py-24" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <h1 className="text-5xl font-extrabold text-pink-400 mb-4">{t.homeTitle}</h1>
-      <p className="max-w-2xl mx-auto text-white/80 mb-8">
-        Discover cosmic products — premium quality and futuristic designs.
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 text-white relative z-10">
+      <h1 className="text-5xl font-extrabold mb-6">Welcome to Phoenix Store 🌌</h1>
+      <p className="text-gray-300 mb-6 text-center max-w-xl">
+        Explore futuristic products in a cosmic environment. Add to cart, checkout via Vodafone Cash or Meeza, and enjoy a fully immersive experience.
       </p>
-      <div className="flex justify-center gap-4">
-        <Link to="/shop" className="px-6 py-3 rounded-xl bg-pink-600 hover:bg-pink-700 shadow-lg">{t.explore}</Link>
-        <Link to="/custom" className="px-6 py-3 rounded-xl border border-white/10">Custom Design</Link>
+      <div className="flex gap-4">
+        <Link
+          to="/shop"
+          className="bg-blue-500 px-6 py-3 rounded hover:bg-blue-600 transition"
+        >
+          Shop Now
+        </Link>
+        <Link
+          to="/cart"
+          className="bg-green-500 px-6 py-3 rounded hover:bg-green-600 transition"
+        >
+          View Cart
+        </Link>
       </div>
-    </motion.section>
+    </div>
   );
 }

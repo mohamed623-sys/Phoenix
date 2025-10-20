@@ -1,57 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase";
 import { Link } from "react-router-dom";
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
-export default function Shop({ t }) {
+export default function Shop() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function load() {
-      const q = collection(db, "products");
-      const snap = await getDocs(q);
-      const arr = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      setProducts(arr);
-      setLoading(false);
-    }
-    load();
-  }, []);
+  const fetchProducts = async () => {
+    const snapshot = await getDocs(collection(db, "products"));
+    setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+  };
+
+  useEffect(() => { fetchProducts(); }, []);
 
   const addToCart = (product) => {
-    const raw = localStorage.getItem("cart") || "[]";
-    const cart = JSON.parse(raw);
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     cart.push(product);
     localStorage.setItem("cart", JSON.stringify(cart));
     alert(`${product.name} added to cart`);
   };
 
-  if (loading) return <div className="py-20 text-center">Loading products...</div>;
-  if (products.length === 0) return <div className="py-20 text-center">No products found. Add via Admin.</div>;
-
   return (
-    <section className="py-12">
-      <h2 className="text-3xl font-bold mb-6">{t.shopTitle}</h2>
+    <div className="p-8 relative z-10 min-h-screen">
+      <h1 className="text-5xl glow mb-8 text-center">Shop</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {products.map(p => (
-          <div key={p.id} className="bg-white/5 p-4 rounded-xl border border-white/10">
-            <Link to={`/product/${p.id}`}>
-              <img src={p.image} alt={p.name} className="w-full h-44 object-cover rounded-md mb-3" />
-            </Link>
-            <div className="flex justify-between items-center">
-              <div>
-                <h3 className="font-semibold">{p.name}</h3>
-                <div className="text-white/70 text-sm">{p.category || ""}</div>
-              </div>
-              <div className="text-pink-400 font-bold">${p.price}</div>
-            </div>
-            <div className="mt-3 flex gap-3">
-              <button onClick={() => addToCart(p)} className="px-4 py-2 rounded bg-pink-600"> {t.addToCart} </button>
-              <Link to={`/product/${p.id}`} className="px-3 py-2 border rounded">View</Link>
+        {products.map((p) => (
+          <div key={p.id} className="card hover:scale-105 transition">
+            <img src={p.image} alt={p.name} className="w-full h-64 object-cover mb-4 float"/>
+            <h2 className="text-2xl font-bold glow mb-2">{p.name}</h2>
+            <p className="text-gray-300 mb-2">{p.description}</p>
+            <p className="font-bold mb-2 glow">EGP {p.price}</p>
+            <div className="flex gap-2">
+              <button onClick={() => addToCart(p)} className="btn w-full">
+                Add to Cart
+              </button>
+              <Link to={`/product/${p.id}`} className="btn w-full text-center">
+                View
+              </Link>
             </div>
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
