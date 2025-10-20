@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.site-header {
+  @apply flex items-center justify-between px-8 py-4 bg-transparent border-b border-purple-800;
+}
+.site-header .logo {
+  @apply text-3xl font-extrabold text-pink-400;
+}
+.site-header nav a {
+  @apply mx-4 text-white/90 hover:text-pink-300;
+}
+.btn { @apply inline-block px-6 py-3 rounded-lg font-semibold; }
+.btn-primary { @apply bg-pink-500 text-white shadow-lg; }
+.btn-outline { @apply border border-pink-400 text-white/90; }
+
+.hero {
+  @apply text-center py-20;
+}
+.hero h1 {
+  @apply text-6xl font-extrabold text-pink-300 drop-shadow-[0_10px_40px_rgba(200,100,250,0.3)];
+}
+.subtitle { @apply mt-6 text-xl text-white/70; }
+
+.container { @apply max-w-5xl mx-auto py-10 px-4; }
+.products-grid { @apply grid grid-cols-1 md:grid-cols-3 gap-6; }
+.product-card { @apply p-4 bg-white/5 rounded-lg; }
