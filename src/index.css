@@ -2,14 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-.btn-futuristic {
-  @apply px-6 py-3 rounded-xl text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg hover:scale-105 transition-transform duration-300;
-}
-
-.input-futuristic {
-  @apply w-full mb-2 p-3 rounded-md bg-gray-900 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500;
+body {
+  @apply bg-black text-white font-sans;
 }
 
 .glow {
-  @apply text-purple-400 drop-shadow-lg;
+  text-shadow: 0 0 8px #fff, 0 0 16px #0ff, 0 0 32px #0ff;
+}
+
+.btn-futuristic {
+  @apply px-4 py-2 rounded-xl bg-cyan-600 text-white font-bold shadow-lg hover:scale-105 transition-transform;
+}
+
+.input-futuristic {
+  @apply px-4 py-2 rounded-xl bg-gray-800 text-white placeholder-gray-400 w-full focus:ring-2 focus:ring-cyan-500 outline-none;
 }

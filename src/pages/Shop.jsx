@@ -1,32 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
-import { Link } from "react-router-dom";
+import { db } from "../firebase";
+import ProductCard from "../components/ProductCard";
+import { motion } from "framer-motion";
 
 export default function Shop() {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = async () => {
+    const productsCol = collection(db, "products");
+    const snapshot = await getDocs(productsCol);
+    setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    setLoading(false);
+  };
 
   useEffect(() => {
-    async function fetchProducts() {
-      const snapshot = await getDocs(collection(db, "products"));
-      setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    }
     fetchProducts();
   }, []);
 
   return (
-    <div className="min-h-screen p-8 relative z-10">
-      <h1 className="text-5xl glow mb-8 text-center">Shop</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {products.map(p => (
-          <Link to={`/product/${p.id}`} key={p.id} className="card cursor-pointer">
-            <img src={p.image} alt={p.name} className="w-full h-64 object-cover mb-2 rounded-lg"/>
-            <h2 className="text-xl glow mb-2">{p.name}</h2>
-            <p className="text-gray-300 mb-2">{p.description}</p>
-            <p className="font-bold glow">EGP {p.price}</p>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <motion.div
+      className="min-h-screen px-6 py-24 text-white grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
+      initial={{ x: 300, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: -300, opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
+      {loading ? (
+        <p>Loading products...</p>
+      ) : (
+        products.map(p => <ProductCard key={p.id} product={p} />)
+      )}
+    </motion.div>
   );
 }

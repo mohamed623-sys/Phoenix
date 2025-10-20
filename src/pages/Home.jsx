@@ -5,20 +5,50 @@ import { motion } from "framer-motion";
 export default function Home() {
   return (
     <motion.div
-      initial={{ opacity: 0, x: -200 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 200 }}
-      className="flex flex-col items-center justify-center min-h-screen relative z-10 p-8"
+      className="relative flex flex-col items-center justify-center min-h-screen text-white px-6 z-10"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
     >
-      <h1 className="text-6xl font-bold glow mb-6 text-center">
-        Welcome to Phoenix Shop 🌌
-      </h1>
-      <p className="text-xl mb-8 text-center text-gray-300">
-        Futuristic shopping experience. Browse and buy with ease.
+      <h1 className="text-6xl font-bold glow mb-4">Phoenix Store</h1>
+      <p className="text-xl glow mb-10 text-center">
+        Futuristic shopping experience with 3D space vibes 🌌
       </p>
-      <Link to="/shop" className="btn-futuristic w-64 text-center">
-        Go to Shop
+      <Link to="/shop" className="btn-futuristic">
+        Explore Shop
       </Link>
+      <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-6xl">
+        <div className="p-4 bg-gray-900 rounded-xl shadow-lg hover:scale-105 transition-transform">
+          <h3 className="text-xl font-bold glow">New Arrivals</h3>
+          <p className="text-gray-400">Check latest products</p>
+        </div>
+        <div className="p-4 bg-gray-900 rounded-xl shadow-lg hover:scale-105 transition-transform">
+          <h3 className="text-xl font-bold glow">Top Sellers</h3>
+          <p className="text-gray-400">Most loved items</p>
+        </div>
+        <div className="p-4 bg-gray-900 rounded-xl shadow-lg hover:scale-105 transition-transform">
+          <h3 className="text-xl font-bold glow">Custom Orders</h3>
+          <p className="text-gray-400">Make your own design</p>
+        </div>
+        <div className="p-4 bg-gray-900 rounded-xl shadow-lg hover:scale-105 transition-transform">
+          <h3 className="text-xl font-bold glow">Exclusive Deals</h3>
+          <p className="text-gray-400">Limited time offers</p>
+        </div>
+      </div>
+
+      <motion.div
+        className="absolute bottom-10 left-0 right-0 flex justify-center space-x-6"
+        animate={{ y: [0, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 2 }}
+      >
+        <Link to="/login" className="btn-futuristic text-sm">
+          Login
+        </Link>
+        <Link to="/admin" className="btn-futuristic text-sm">
+          Admin
+        </Link>
+      </motion.div>
     </motion.div>
   );
 }
